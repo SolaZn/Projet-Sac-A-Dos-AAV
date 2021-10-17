@@ -1,9 +1,11 @@
+package items;
+
 import java.util.LinkedList;
 
-public class Itérateur {
+public class NoeudOptimal {
     private Arbre noeudOptimal;
 
-    public Itérateur(){
+    public NoeudOptimal(){
         noeudOptimal = new Arbre();
     }
 

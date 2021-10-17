@@ -1,3 +1,10 @@
+package appli;
+
+import items.Arbre;
+import items.NoeudOptimal;
+import items.Objet;
+import items.SacADos;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.LinkedList;
@@ -37,7 +44,6 @@ public class Application {
     }
 
     public static void gloutonne(SacADos sac, LinkedList<Objet> objets){
-        Objet tmp = null;
         for(int i = 2; i <= objets.size(); i++){
             for(int j = 0; j < objets.size()-1; j++){
                 if (objets.get(j+1).smallerThan(objets.get(j)) < 0){
@@ -58,7 +64,8 @@ public class Application {
         for(Objet objet:objets){
             objet.setWeight(objet.getWeight()*10);
         }
-        sac.setPoidMax(sac.getPoidsMaximal() * 10);
+
+        sac.setPoidsMaximal(sac.getPoidsMaximal() * 10);
         float[][] M= new float[objets.size()][(int)sac.getPoidsMaximal()+1];
         for(int j = 0; j <= sac.getPoidsMaximal(); ++j){
             if(objets.get(0).getWeight() > j){
@@ -92,16 +99,20 @@ public class Application {
         for(Objet objet: sac.getObjets()){
             objet.setWeight(objet.getWeight()/10);
         }
-        sac.setPoidMax(sac.getPoidsMaximal() / 10);
-        System.out.println(sac.toString());
+        sac.setPoidsMaximal(sac.getPoidsMaximal() / 10);
+
+        System.out.println(sac);
     }
 
     public static void PSE(SacADos sac, LinkedList<Objet> objets){
         Arbre racine = new Arbre();
-        Itérateur it = new Itérateur();
+        NoeudOptimal noeudOptimal = new NoeudOptimal();
+
         racine.initBorneInf();
-        racine.remplirArbre(objets, false, -1, sac.getPoidsMaximal(), it);
-        sac.setObjets(it.getOptimalNode());
+        racine.remplirArbre(objets, false, -1, sac.getPoidsMaximal(), noeudOptimal);
+
+        sac.setObjets(noeudOptimal.getOptimalNode());
+
         System.out.println(sac);
     }
 
@@ -109,9 +120,9 @@ public class Application {
         Scanner sc = new Scanner(System.in);
         sc.next();
         String chemin = sc.next();
-        int poidMaximal = sc.nextInt();
+        int poidsMaximal = sc.nextInt();
         String methode = sc.next();
-        SacADos sac = new SacADos(chemin, poidMaximal);
+        SacADos sac = new SacADos(chemin, poidsMaximal);
         LinkedList<Objet> objets = lireFichier();
         switch (methode){
             case("gloutonne") :
@@ -122,6 +133,9 @@ public class Application {
                 break;
             case("PSE"):
                 PSE(sac, objets);
+                break;
+            default:
+                System.exit(0);
         }
     }
 }

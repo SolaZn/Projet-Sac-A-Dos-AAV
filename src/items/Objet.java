@@ -1,3 +1,5 @@
+package items;
+
 public class Objet {
     private String name;
     private float weight;
@@ -23,11 +25,7 @@ public class Objet {
 
     @Override
     public String toString() {
-        return "Objet{" +
-                "name='" + name + '\'' +
-                ", weight=" + weight +
-                ", value=" + value +
-                '}';
+        return this.name + " ; " + this.weight + " ; " + this.value;
     }
 
     public float getWeight() {

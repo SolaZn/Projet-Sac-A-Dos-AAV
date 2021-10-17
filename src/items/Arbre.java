@@ -1,9 +1,10 @@
+package items;
+
 import java.util.LinkedList;
 
 public class Arbre {
     private LinkedList<Objet> objets;
     private Arbre sousArbreDroit, sousArbreGauche;
-    private float borneSup;
     private float borneInferieur;
     private static float BorneInf;
 
@@ -14,13 +15,11 @@ public class Arbre {
 
     public Arbre(LinkedList<Objet> objetsPere){
         this.objets = new LinkedList<>();
-        for (Objet objet : objetsPere) {
-            this.objets.add(objet);
-        }
+        this.objets.addAll(objetsPere);
         sousArbreDroit = sousArbreGauche = null;
     }
 
-    public void initBorneInf(){
+    public static void initBorneInf(){
         Arbre.BorneInf = 0;
     }
 
@@ -51,8 +50,8 @@ public class Arbre {
         return objets;
     }
 
-    public void remplirArbre(LinkedList<Objet> objets, boolean isAscendante, int entier, float poidsMax, Itérateur it){
-        if (isAscendante == true) {
+    public void remplirArbre(LinkedList<Objet> objets, boolean isAscendante, int entier, float poidsMax, NoeudOptimal it){
+        if (isAscendante) {
             this.setObjet(objets.get(entier));
         }
 
@@ -101,7 +100,6 @@ public class Arbre {
         for(int i = entier +1; i < objets.size(); ++i){
             val += objets.get(i).getValue();
         }
-        borneSup = val;
         return val;
     }
 }

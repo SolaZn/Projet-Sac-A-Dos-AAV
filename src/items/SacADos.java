@@ -1,3 +1,7 @@
+package items;
+
+import items.Objet;
+
 import java.util.LinkedList;
 
 public class SacADos {
@@ -51,15 +55,16 @@ public class SacADos {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        for(Objet objet: objets){
+        for (Objet objet: objets) {
             sb.append(objet.toString()).append("\n");
         }
-        sb.append("Le poids du sac est de: ").append(getPoids()).append("\n");
-        sb.append("La valeur du sac est de: ").append(getValeur());
-        return sb.toString();
+        sb.append("Poids maximum à respecter : ").append(poidsMaximal).append(" kilogrammes\n");
+        sb.append("Poids total : ").append(getPoids()).append(" kilogrammes\n");
+        sb.append("Valeur totale : ").append(getValeur()).append("€\n");
+        return String.valueOf(sb);
     }
 
-    public void setPoidMax(float v) {
-        poidsMaximal = v;
+    public void setPoidsMaximal(float poids) {
+        poidsMaximal = poids;
     }
 }
