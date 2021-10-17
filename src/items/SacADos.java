@@ -6,6 +6,8 @@ import java.util.LinkedList;
 public class SacADos {
     private LinkedList<Objet> objets;
     private float poidsMaximal;
+    private static int nombreItemsTotal = 0;
+
 
     public SacADos(){
         objets = null;
@@ -14,6 +16,10 @@ public class SacADos {
     public SacADos(float poidsMaximal){
         this.objets = new LinkedList<>();
         this.poidsMaximal = poidsMaximal;
+    }
+
+    public static void setNombreItemsTotal(int nombreItemsTotal) {
+        SacADos.nombreItemsTotal = nombreItemsTotal;
     }
 
     public float getPoidsMaximal(){
@@ -56,7 +62,9 @@ public class SacADos {
             sb.append(objet.toString()).append("\n");
         }
         sb.append("\nPoids maximum à respecter : ").append(poidsMaximal).append(" kilogrammes\n");
-        sb.append("Poids total : ").append(getPoids()).append(" kilogrammes\n");
+        sb.append("Poids total : ").append(getPoids()).append(" kilogrammes\n\n");
+        sb.append("Nombre d'items à ranger : ").append(nombreItemsTotal).append(" items\n");
+        sb.append("Nombre d'items rangés : ").append(objets.size()).append(" items\n");
         sb.append("Valeur totale : ").append(getValeur()).append("€\n");
         return String.valueOf(sb);
     }

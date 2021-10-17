@@ -70,13 +70,17 @@ public class Arbre {
         val = getBorneSup(objets, entier, val);
         if(val < Arbre.BorneInf) return;
 
+        //Verification si le noeud est un possible meilleur noeud
         it.addPotentialNode(this);
 
         if(entier == objets.size() - 1) return;
+
         this.setSousArbreGauche(new Arbre(this.objets));
         getSousArbreGauche().remplirArbre(objets,false, entier + 1, poidsMax, it);
         nombreNoeuds++;
 
+        // on ne crée un noeud droit (supérieur) que si son hypothétique poids ne dépasse pas le poids max
+        // gain de performance
         if(this.getPoidsSuivant(objets, entier) + this.getWeight() <= poidsMax) {
             this.setSousArbreDroit(new Arbre(this.objets));
             getSousArbreDroit().remplirArbre(objets, true, entier + 1, poidsMax, it);

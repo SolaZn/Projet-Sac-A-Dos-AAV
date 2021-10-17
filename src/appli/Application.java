@@ -46,6 +46,7 @@ public class Application {
     }
 
     public static void gloutonne(SacADos sac, LinkedList<Objet> objets){
+        SacADos.setNombreItemsTotal(objets.size());
         debut = System.nanoTime();
 
         for(int i = 2; i <= objets.size(); i++){
@@ -68,6 +69,7 @@ public class Application {
     }
 
     public static void dynamique(SacADos sac, LinkedList<Objet> objets){
+        SacADos.setNombreItemsTotal(objets.size());
         debut = System.nanoTime();
 
         for(Objet objet:objets){
@@ -117,6 +119,7 @@ public class Application {
     }
 
     public static void PSE(SacADos sac, LinkedList<Objet> objets){
+        SacADos.setNombreItemsTotal(objets.size());
         debut = System.nanoTime();
 
         Arbre racine = new Arbre();
@@ -155,6 +158,7 @@ public class Application {
             default:
                 System.exit(0);
         }
+
         long duree = (fin - debut);
         System.out.println("Temps d'exécution : " + duree + "ns" + "\n\t\t\t\t    " + duree / (double) 1000000 + "ms" + "\n\t\t\t\t    " + duree / (double) 1000000000 + "s");
     }
