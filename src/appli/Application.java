@@ -11,14 +11,15 @@ import java.util.LinkedList;
 import java.util.Scanner;
 
 public class Application {
+    private static long debut = 0;
+    private static long fin = 0;
 
-    public static LinkedList<Objet> lireFichier(){
+    public static LinkedList<Objet> lireFichier(String chemin){
         LinkedList<Objet> objets = new LinkedList<>();
         try
         {
-            FileInputStream file = new FileInputStream("Objets.txt");
+            FileInputStream file = new FileInputStream(chemin);
             Scanner scan = new Scanner(file);
-            int i = 0;
             while(scan.hasNextLine())
             {
                 String s = scan.nextLine();
@@ -31,6 +32,7 @@ public class Application {
         catch(IOException e)
         {
             System.out.println("Le fichier n'existe pas!");
+            System.exit(1);
         }
         return objets;
     }
@@ -44,6 +46,8 @@ public class Application {
     }
 
     public static void gloutonne(SacADos sac, LinkedList<Objet> objets){
+        debut = System.nanoTime();
+
         for(int i = 2; i <= objets.size(); i++){
             for(int j = 0; j < objets.size()-1; j++){
                 if (objets.get(j+1).smallerThan(objets.get(j)) < 0){
@@ -57,15 +61,21 @@ public class Application {
                 sac.addObjet(objet);
             }
         }
-        System.out.println(sac.toString());
+
+        fin = System.nanoTime();
+
+        System.out.println(sac);
     }
 
     public static void dynamique(SacADos sac, LinkedList<Objet> objets){
+        debut = System.nanoTime();
+
         for(Objet objet:objets){
             objet.setWeight(objet.getWeight()*10);
         }
 
         sac.setPoidsMaximal(sac.getPoidsMaximal() * 10);
+
         float[][] M= new float[objets.size()][(int)sac.getPoidsMaximal()+1];
         for(int j = 0; j <= sac.getPoidsMaximal(); ++j){
             if(objets.get(0).getWeight() > j){
@@ -101,29 +111,37 @@ public class Application {
         }
         sac.setPoidsMaximal(sac.getPoidsMaximal() / 10);
 
+        fin = System.nanoTime();
+
         System.out.println(sac);
     }
 
     public static void PSE(SacADos sac, LinkedList<Objet> objets){
+        debut = System.nanoTime();
+
         Arbre racine = new Arbre();
         NoeudOptimal noeudOptimal = new NoeudOptimal();
 
-        racine.initBorneInf();
+        Arbre.initBorneInf();
         racine.remplirArbre(objets, false, -1, sac.getPoidsMaximal(), noeudOptimal);
 
         sac.setObjets(noeudOptimal.getOptimalNode());
 
+        fin = System.nanoTime();
+
         System.out.println(sac);
+        System.out.println(Arbre.nombreNoeuds + " noeud(s) créés dans l'arbre");
     }
 
     public static void main(String[] args){
         Scanner sc = new Scanner(System.in);
         sc.next();
         String chemin = sc.next();
-        int poidsMaximal = sc.nextInt();
+        float poidsMaximal = Float.parseFloat(sc.next());
         String methode = sc.next();
-        SacADos sac = new SacADos(chemin, poidsMaximal);
-        LinkedList<Objet> objets = lireFichier();
+        SacADos sac = new SacADos(poidsMaximal);
+        LinkedList<Objet> objets = lireFichier(chemin);
+
         switch (methode){
             case("gloutonne") :
                 gloutonne(sac, objets);
@@ -137,5 +155,7 @@ public class Application {
             default:
                 System.exit(0);
         }
+        long duree = (fin - debut);
+        System.out.println("Temps d'exécution : " + duree + "ns" + "\n\t\t\t\t    " + duree / (double) 1000000 + "ms" + "\n\t\t\t\t    " + duree / (double) 1000000000 + "s");
     }
 }

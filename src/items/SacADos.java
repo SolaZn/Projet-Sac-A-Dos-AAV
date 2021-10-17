@@ -1,21 +1,17 @@
 package items;
 
-import items.Objet;
 
 import java.util.LinkedList;
 
 public class SacADos {
-    private final String chemin;
     private LinkedList<Objet> objets;
     private float poidsMaximal;
 
     public SacADos(){
-        chemin = null;
         objets = null;
     }
 
-    public SacADos(String chemin, float poidsMaximal){
-        this.chemin = chemin;
+    public SacADos(float poidsMaximal){
         this.objets = new LinkedList<>();
         this.poidsMaximal = poidsMaximal;
     }
@@ -55,10 +51,11 @@ public class SacADos {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
+        sb.append("Contenu du sac :\n\n");
         for (Objet objet: objets) {
             sb.append(objet.toString()).append("\n");
         }
-        sb.append("Poids maximum à respecter : ").append(poidsMaximal).append(" kilogrammes\n");
+        sb.append("\nPoids maximum à respecter : ").append(poidsMaximal).append(" kilogrammes\n");
         sb.append("Poids total : ").append(getPoids()).append(" kilogrammes\n");
         sb.append("Valeur totale : ").append(getValeur()).append("€\n");
         return String.valueOf(sb);

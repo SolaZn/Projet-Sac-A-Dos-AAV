@@ -5,8 +5,8 @@ import java.util.LinkedList;
 public class Arbre {
     private LinkedList<Objet> objets;
     private Arbre sousArbreDroit, sousArbreGauche;
-    private float borneInferieur;
     private static float BorneInf;
+    public static int nombreNoeuds = 0;
 
     public Arbre(){
         objets = new LinkedList<>();
@@ -65,7 +65,6 @@ public class Arbre {
             val += objet.getValue();
         }
         if(val > Arbre.BorneInf) Arbre.BorneInf = val;
-        this.borneInferieur = Arbre.BorneInf;
 
         //Verification Borne Supérieur
         val = getBorneSup(objets, entier, val);
@@ -76,8 +75,13 @@ public class Arbre {
         if(entier == objets.size() - 1) return;
         this.setSousArbreGauche(new Arbre(this.objets));
         getSousArbreGauche().remplirArbre(objets,false, entier + 1, poidsMax, it);
-        this.setSousArbreDroit(new Arbre(this.objets));
-        getSousArbreDroit().remplirArbre(objets, true, entier + 1, poidsMax, it);
+        nombreNoeuds++;
+
+        if(this.getPoidsSuivant(objets, entier) + this.getWeight() <= poidsMax) {
+            this.setSousArbreDroit(new Arbre(this.objets));
+            getSousArbreDroit().remplirArbre(objets, true, entier + 1, poidsMax, it);
+            nombreNoeuds++;
+        }
     }
 
     float getWeight() {
@@ -101,5 +105,9 @@ public class Arbre {
             val += objets.get(i).getValue();
         }
         return val;
+    }
+
+    private float getPoidsSuivant(LinkedList<Objet> objets, int entier){
+        return objets.get(entier+1).getWeight();
     }
 }
