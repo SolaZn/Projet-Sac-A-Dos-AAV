@@ -1,31 +1,29 @@
 package items;
 
+import java.util.Comparator;
+
 public final class Objet {
     private final String name;
     private float weight;
     private final float value;
+    private final float WVratio; // Weight/Value ratio
+
+    // comparateur : utilise la valeur du WRatio pour comparer
+    public static final Comparator<Objet> parRatio = Comparator.comparing(Objet::getWVratio);
 
     // constructeur
     public Objet(String name, float weight, float value){
         this.name = name;
         this.weight = weight;
         this.value = value;
-    }
-
-    // fonction de comparaison entre deux objets
-    public int smallerThan(Objet objet){
-        float tmp = this.value/this.weight;
-        float tmp1 = objet.value/objet.weight;
-        if(tmp < tmp1){
-            return 1;
-        } else if(tmp == tmp1){
-            return 0;
-        } else {
-            return -1;
-        }
+        this.WVratio = value / weight;
     }
 
     // fonctions de récupération des valeurs clés
+    private float getWVratio() {
+        return WVratio;
+    }
+
     public float getWeight() {
         return this.weight;
     }

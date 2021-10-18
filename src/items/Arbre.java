@@ -6,6 +6,9 @@ public class Arbre {
     private LinkedList<Objet> objets;
     private Arbre sousArbreDroit, sousArbreGauche;
     private static float BorneInf;
+    //variable stockant l'état de traitement du noeud
+    // TRUE si noeud checké par algo
+    // FALSE si noeud à créer/créé mais pas encore checké
     private boolean noeudVerifie;
 
     // variables globales de benchmark
@@ -15,7 +18,7 @@ public class Arbre {
     public static long usageMemMax = 0;
     public static float coutParNoeud = 0;
 
-    // constructeurs
+    // constructeurs et initialisateurs
     public Arbre(){
         objets = new LinkedList<>();
         sousArbreDroit = sousArbreGauche = null;
@@ -34,14 +37,14 @@ public class Arbre {
     }
 
     // fonctions liées à la liste d'objets de l'arbre
-    public void setObjet(Objet objet) {
+    private void setObjet(Objet objet) {
         if(objets == null){
             this.objets = new LinkedList<>();
         }
         this.objets.add(objet);
     }
 
-    public LinkedList<Objet> getObjets() {
+    LinkedList<Objet> getObjets() {
         return objets;
     }
 
@@ -56,67 +59,104 @@ public class Arbre {
     }
 
     // getters et setters des sous arbres
-    public Arbre getSousArbreDroit() {
+    Arbre getSousArbreDroit() {
         return sousArbreDroit;
     }
 
-    public Arbre getSousArbreGauche() {
+    Arbre getSousArbreGauche() {
         return sousArbreGauche;
     }
 
-    public void setSousArbreDroit(Arbre sousArbreDroit) {
+    void setSousArbreDroit(Arbre sousArbreDroit) {
         this.sousArbreDroit = sousArbreDroit;
     }
 
-    public void setSousArbreGauche(Arbre sousArbreGauche) {
+    void setSousArbreGauche(Arbre sousArbreGauche) {
         this.sousArbreGauche = sousArbreGauche;
     }
 
     // fonctions de construction de l'arbre
     public void remplirArbre(LinkedList<Objet> objets, boolean isAscendante, int entier, float poidsMax, NoeudOptimal node){
-        long usageMem;
+        long usageMem; // benchmark | mémoire utilisée
+
+        // étape 1 bis : si il s'agit d'un noeud en branche ascendante,
+        // ajouter l'objet correspondant à la profondeur actuelle
         if (isAscendante) {
             this.setObjet(objets.get(entier));
         }
 
-        //Verification du poids
+        // étape 1 : verification du poids
+        // si le poids du noeud dépasse le poids max,
+        // on considère que le traitement du noeud est terminé
+        // RETOUR au noeud PERE
         float weight = getWeight();
         if(weight > poidsMax) {
             noeudVerifie = true;
             return;
         }
 
-        //Verification Borne Inférieur
+        // étape 2 : verification de la borne INFerieure
+        // on vérifie d'abord si la borne inférieure est une
+        // potentielle NOUVELLE borne inférieure
+        // SI borneINF arbre > borneINF globale actuelle
+        // ALORS borneINF arbre devient nouvelle borneINF globale
         float val = 0;
         for(Objet objet: this.getObjets()){
             val += objet.getValue();
         }
         if(val > Arbre.BorneInf) Arbre.BorneInf = val;
 
-        //Verification Borne Supérieur
+        // étape 3 : verification de la borne SUPerieure
+        // on vérifie ensuite si la borne supérieure est inférieure
+        // à la borneINF globale actuelle
+        // SI borneINF globale > borneSUP arbre
+        // ALORS le traitement se termine
+        // RETOUR au noeud PERE
         val = getBorneSup(objets, entier, val);
         if(val < Arbre.BorneInf){
             noeudVerifie = true;
             return;
         }
 
-        //Verification si le noeud est un possible meilleur noeud
+        // étape 4 : verification de la qualité du noeud
+        // on vérifie ensuite si le noeud est un possible
+        // nouveau meilleur noeud à l'aide de la fonction addPotentialNode()
         node.addPotentialNode(this);
         noeudVerifie = true;
 
+        // DEBUT benchmark | mémoire utilisée
+        // récupère la quantité de mémoire mobilisées pour effectuer les traitements précédents
         usageMem = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
         setCoutParNoeud(usageMem);
+        // FIN benchmark | mémoire utilisée
 
+        // étape 5 : verification de la profondeur du noeud
+        // une fois l'hypothèse meilleur noeud vérifiée et donc
+        // potentiellement enregistrée, on vérifie si l'on a
+        // atteint la profondeur max de l'arbre
+        // SI atteinte ALORS RETOUR au PERE
         if(entier == objets.size() - 1) {
             noeudVerifie = true;
             return;
         }
 
+        // étape 6 : ajout d'un premier noeud fils GAUCHE
+        // une fois tous les traitements effectués, on créé l'enfant
+        // de gauche, descendant, en lui donnant comme liste d'objets
+        // la même que celle du PERE
         this.setSousArbreGauche(new Arbre(this.objets));
         getSousArbreGauche().remplirArbre(objets,false, entier + 1, poidsMax, node);
         nombreNoeudsCrees++;
+
+        // DEBUT benchmark | mémoire utilisée
         usageMem = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
         setUsageMemMax(usageMem);
+        // FIN benchmark | mémoire utilisée
+
+        // étape 7 : ajout d'un premier noeud fils DROIT
+        // une fois le noeud de gauche créé, on passe au noeud droit,
+        // ascendant, à qui on donne la même liste, à laquelle il ajoutera
+        // l'objet suivant dans la liste d'objets
 
         // OPTIMISATION 1 : évaluation de l'arbre supérieur suivant
         // on ne crée un noeud droit (supérieur) que si son hypothétique poids ne dépasse pas le poids max
@@ -127,9 +167,17 @@ public class Arbre {
             getSousArbreDroit().remplirArbre(objets, true, entier + 1, poidsMax, node);
             nombreNoeudsCrees++;
 
+            // DEBUT benchmark | mémoire utilisée
             usageMem = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
             setUsageMemMax(usageMem);
+            // FIN benchmark | mémoire utilisée
         }
+
+        // étape 8 : mise au rebut des sous arbres
+        // une fois le traitement des deux sous arbres terminés,
+        // (arbres créés, puis signalés traité), on les met au rebut
+        // (le GarbageCollector se chargera de vider la mémoire allouée)
+        // afin de limiter l'espace mémoire
 
         // OPTIMISATION 2 : suppression en mémoire des branches déjà analysées
         // une fois les deux fils vérifiés, il n'y a plus lieu de les conserver dans l'arbre
@@ -149,6 +197,13 @@ public class Arbre {
     }
 
     // fonctions de récupération des valeurs clés
+    private float getBorneSup(LinkedList<Objet> objets, int entier, float val) {
+        for(int i = entier +1; i < objets.size(); ++i){
+            val += objets.get(i).getValue();
+        }
+        return val;
+    }
+
     float getWeight() {
         float weight = 0;
         for(Objet objet: this.getObjets()){
@@ -163,12 +218,5 @@ public class Arbre {
             value += objet.getValue();
         }
         return value;
-    }
-
-    private float getBorneSup(LinkedList<Objet> objets, int entier, float val) {
-        for(int i = entier +1; i < objets.size(); ++i){
-            val += objets.get(i).getValue();
-        }
-        return val;
     }
 }

@@ -7,7 +7,7 @@ public class SacADos {
     private LinkedList<Objet> objets;
     private float poidsMaximal;
 
-    // fonctions globales de benchmark et de formatage
+    // fonctions et variables globales de benchmark et de formatage
     private static int nombreItemsTotal = 0;
     public static final DecimalFormat df = new DecimalFormat("#.#");
 
@@ -15,17 +15,20 @@ public class SacADos {
         SacADos.nombreItemsTotal = nombreItemsTotal;
     }
 
-    // fonction globale de changement de format de poids pour tout type de liste d'objets
+    // fonction de changement de format de poids pour tout type de liste d'objets
     // (que ce soit des sacs implicites ou explicites)
-    public static void setWeight(String mode, LinkedList<Objet> objets) {
+    public void setWeight(String mode, LinkedList<Objet> objets) {
         if(mode.equals("etendre")){ // passer les poids décimaux en poids entiers "exacts"
             for(Objet objet:objets){
                 objet.setWeight(objet.getWeight()*10);
             }
+            this.poidsMaximal = poidsMaximal * 10;
+
         }else if(mode.equals("reduire")){ // revenir aux valeurs décimales
             for(Objet objet: objets){
                 objet.setWeight(objet.getWeight()/10);
             }
+            this.poidsMaximal = poidsMaximal / 10;
         }
 
     }
@@ -35,7 +38,7 @@ public class SacADos {
         objets = null;
     }
 
-    public SacADos(float poidsMaximal){
+    public SacADos(String chemin, float poidsMaximal){
         this.objets = new LinkedList<>();
         this.poidsMaximal = poidsMaximal;
     }
@@ -72,10 +75,6 @@ public class SacADos {
 
     public void setObjets(LinkedList<Objet> objets){
         this.objets = objets;
-    }
-
-    public void setPoidsMaximal(float poids) {
-        poidsMaximal = poids;
     }
 
     // fonction d'affichage du contenu du sac

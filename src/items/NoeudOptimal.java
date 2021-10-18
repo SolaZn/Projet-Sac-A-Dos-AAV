@@ -27,12 +27,15 @@ public class NoeudOptimal {
 
     // fonction de découverte d'un potentiel nouveau noeud parfait
     public void addPotentialNode(Arbre noeudPotentiel){
-            if(noeudPotentiel.getValue() > this.noeudOptimal.getValue()){
+        if(noeudPotentiel.getValue() > this.noeudOptimal.getValue()){
+            // cas 1 : la valeur du noeud potentiel est supérieure à celle du noeud optimal actuel
+            copyNode(noeudPotentiel.getObjets());
+        }else if(noeudPotentiel.getValue() == this.noeudOptimal.getValue()) {
+            if (noeudPotentiel.getWeight() < this.noeudOptimal.getWeight()) {
+                // cas 2 : la valeur du noeud potentiel est égale à celle du noeud optimal actuel
+                // ET le poids est meilleur sur le potentiel que sur l'optimal actuel
                 copyNode(noeudPotentiel.getObjets());
-            }else if(noeudPotentiel.getValue() == this.noeudOptimal.getValue()) {
-                if (noeudPotentiel.getWeight() < this.noeudOptimal.getWeight()) {
-                    copyNode(noeudPotentiel.getObjets());
-                }
             }
+        }
     }
 }
