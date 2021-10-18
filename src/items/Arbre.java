@@ -6,17 +6,32 @@ public class Arbre {
     private LinkedList<Objet> objets;
     private Arbre sousArbreDroit, sousArbreGauche;
     private static float BorneInf;
-    public static int nombreNoeuds = 0;
+    private boolean noeudVerifie;
+
+    //benchmark
+    public static int nombreNoeudsCrees = 1;
+    public static int nombreNoeudsSupprimes = 1;
+
+    public static long usageMemMax = 0;
+    public static long coutParNoeudAsc = 0;
+    public static long coutParNoeudDsc = 0;
+
+    //test optimisation; donner un arbre quasi vide
+    Arbre getStrippedTree(){
+        return new Arbre(this.objets);
+    }
 
     public Arbre(){
         objets = new LinkedList<>();
         sousArbreDroit = sousArbreGauche = null;
+        noeudVerifie = false;
     }
 
     public Arbre(LinkedList<Objet> objetsPere){
         this.objets = new LinkedList<>();
         this.objets.addAll(objetsPere);
         sousArbreDroit = sousArbreGauche = null;
+        noeudVerifie = false;
     }
 
     public static void initBorneInf(){
@@ -28,6 +43,29 @@ public class Arbre {
             this.objets = new LinkedList<>();
         }
         this.objets.add(objet);
+    }
+
+    // opti
+    protected void changeObjetList(LinkedList<Objet> objets){
+        this.objets = objets;
+    }
+
+    protected boolean getnoeudVerifie(){
+        return this.noeudVerifie;
+    }
+
+    // benchmark
+    public void setUsageMemMax(long usageMem){
+        if(usageMem > usageMemMax){
+            usageMemMax = usageMem;
+        }
+    }
+
+    private void setCoupParNoeud(long usageMem, boolean isAscendante) {
+        if(isAscendante){
+            coutParNoeudAsc = usageMem / nombreNoeudsCrees;
+        }else
+            coutParNoeudDsc = usageMem / nombreNoeudsCrees;
     }
 
     public Arbre getSousArbreDroit() {
@@ -51,13 +89,21 @@ public class Arbre {
     }
 
     public void remplirArbre(LinkedList<Objet> objets, boolean isAscendante, int entier, float poidsMax, NoeudOptimal it){
+        long usageMem = 0;
         if (isAscendante) {
             this.setObjet(objets.get(entier));
+        }
+        else{
+            usageMem = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+            setCoupParNoeud(usageMem,false);
         }
 
         //Verification du poids
         float weight = getWeight();
-        if(weight > poidsMax) return;
+        if(weight > poidsMax) {
+            noeudVerifie = true;
+            return;
+        }
 
         //Verification Borne Inférieur
         float val = 0;
@@ -68,23 +114,51 @@ public class Arbre {
 
         //Verification Borne Supérieur
         val = getBorneSup(objets, entier, val);
-        if(val < Arbre.BorneInf) return;
+        if(val < Arbre.BorneInf){
+            noeudVerifie = true;
+            return;
+        }
 
         //Verification si le noeud est un possible meilleur noeud
         it.addPotentialNode(this);
+        noeudVerifie = true;
 
-        if(entier == objets.size() - 1) return;
+        if (isAscendante) {
+            usageMem = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+            setCoupParNoeud(usageMem,true);
+        }
+        else{
+            usageMem = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+            setCoupParNoeud(usageMem,false);
+        }
+
+        if(entier == objets.size() - 1) {
+            noeudVerifie = true;
+            return;
+        }
 
         this.setSousArbreGauche(new Arbre(this.objets));
         getSousArbreGauche().remplirArbre(objets,false, entier + 1, poidsMax, it);
-        nombreNoeuds++;
+        nombreNoeudsCrees++;
+        usageMem = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+        setUsageMemMax(usageMem);
 
         // on ne crée un noeud droit (supérieur) que si son hypothétique poids ne dépasse pas le poids max
         // gain de performance
         if(this.getPoidsSuivant(objets, entier) + this.getWeight() <= poidsMax) {
             this.setSousArbreDroit(new Arbre(this.objets));
             getSousArbreDroit().remplirArbre(objets, true, entier + 1, poidsMax, it);
-            nombreNoeuds++;
+            nombreNoeudsCrees++;
+
+            usageMem = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+            setUsageMemMax(usageMem);
+        }
+        if(sousArbreDroit != null && sousArbreGauche != null) {
+            if (sousArbreDroit.noeudVerifie && sousArbreGauche.noeudVerifie) {
+                sousArbreDroit = sousArbreGauche = null;
+                nombreNoeudsSupprimes++;
+                nombreNoeudsSupprimes++;
+            }
         }
     }
 

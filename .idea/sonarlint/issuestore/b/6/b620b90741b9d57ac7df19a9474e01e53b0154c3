@@ -1,0 +1,19 @@
+
+Œ
+java:S1319"qThe return type of this method should be an interface such as "List" rather than the implementation "LinkedList".(Ô†£¨úÿÿÿÿ
+ˆ
+java:S13190"rThe type of the "objets" object should be an interface such as "List" rather than the implementation "LinkedList".(…Ë¬¿
+
+java:S1319G"rThe type of the "objets" object should be an interface such as "List" rather than the implementation "LinkedList".(Š½úÈûÿÿÿÿ
+
+java:S1319y"rThe type of the "objets" object should be an interface such as "List" rather than the implementation "LinkedList".(şª…õÿÿÿÿÿ
+k	java:S117Q"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ÆœÕ»üÿÿÿÿ
+M	java:S106""9Replace this use of System.out or System.err by a logger.(³©ÖW
+N	java:S106D"9Replace this use of System.out or System.err by a logger.(Úäêè
+m
+java:S3776G"RRefactor this method to reduce its Cognitive Complexity from 19 to the 15 allowed.(Š½úÈûÿÿÿÿ
+N	java:S106v"9Replace this use of System.out or System.err by a logger.(Úäêè
+h	java:S100y"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(şª…õÿÿÿÿÿ
+O	java:S106‡"9Replace this use of System.out or System.err by a logger.(Úäêè
+O	java:S106ˆ"9Replace this use of System.out or System.err by a logger.(² ™Ä
+O	java:S106£"9Replace this use of System.out or System.err by a logger.(Â—ë

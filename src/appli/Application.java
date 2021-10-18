@@ -133,7 +133,7 @@ public class Application {
         fin = System.nanoTime();
 
         System.out.println(sac);
-        System.out.println(Arbre.nombreNoeuds + " noeud(s) créés dans l'arbre");
+        System.out.println(Arbre.nombreNoeudsCrees + " noeud(s) créés dans l'arbre");
     }
 
     public static void main(String[] args){
@@ -160,6 +160,9 @@ public class Application {
         }
 
         long duree = (fin - debut);
+        System.out.println(Arbre.nombreNoeudsCrees - Arbre.nombreNoeudsSupprimes + " noeud(s) actuellement dans l'arbre");
         System.out.println("Temps d'exécution : " + duree + "ns" + "\n\t\t\t\t    " + duree / (double) 1000000 + "ms" + "\n\t\t\t\t    " + duree / (double) 1000000000 + "s");
+        System.out.println("Usage mémoire max : " + Arbre.usageMemMax / (double) 1000000 + " MB");
+        System.out.println("Coût mémoire par noeud | ASC : " + Arbre.coutParNoeudAsc + " octets \n\t\t\t\t\t\t DSC : " + Arbre.coutParNoeudDsc + " octets");
     }
 }

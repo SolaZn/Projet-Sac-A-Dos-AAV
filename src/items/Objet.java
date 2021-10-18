@@ -1,9 +1,9 @@
 package items;
 
-public class Objet {
-    private String name;
+public final class Objet {
+    private final String name;
     private float weight;
-    private float value;
+    private final float value;
 
     public Objet(String name, float weight, float value){
         this.name = name;
